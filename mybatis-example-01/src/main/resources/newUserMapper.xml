@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- mapper标签是当前配置文件的根标签 -->
+<!-- namespace属性：表示命名空间，用来设定当前Mapper配置文件的唯一标识，将来在Java程序中通过namespace属性的值来定位到这个配置文件 -->
+<mapper namespace="newuser">
+    <select id="queryById" resultType="entity.User">
+        select id, full_name as fullName, age, email, password from user where id = #{id}
+    </select>
+</mapper>
