@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- mapper标签是当前配置文件的根标签 -->
+<!-- namespace属性：表示命名空间，用来设定当前Mapper配置文件的唯一标识，将来在Java程序中通过namespace属性的值来定位到这个配置文件
+     一般用对应Mapper接口全限定名设置namespace-->
+<mapper namespace="mapper.UserMapper">
+
+    <!-- #{}中的参数要和map的key一致，  -->
+    <insert id="InsertUserForMap">
+        insert into user(id, full_name, age, email, password) values(#{id}, #{fullName}, #{age}, #{email}, #{password})
+
+    </insert>
+
+    <!-- #{}中的参数要和实体类中对应参数getter方法去掉get后首字母小写一致，  -->
+    <insert id="InsertUserForObject">
+        insert into user(id, full_name, age, email, password) values(#{id}, #{fullName}, #{age}, #{email}, #{password})
+    </insert>
+
+
+    <select id="queryById" resultType="entity.User">
+        select id, full_name as fullName, age, email, password from user where id = #{id}
+    </select>
+
+    <!-- User类中属性为fullName， 而数据库中对应字段为full_name,如果查询的时候不给full_name字段取别名fullName，这个属性就不能成功赋给User中的fullName -->
+    <select id="selectUserById" resultType="entity.User">
+        select  id, full_name  as fullName, age, email, password from user where id = #{id}
+    </select>
+</mapper>
