@@ -8,24 +8,65 @@
      一般用对应Mapper接口全限定名设置namespace-->
 <mapper namespace="mapper.UserMapper">
 
-    <!-- #{}中的参数要和map的key一致，  -->
+    <!--单个参数传递：通过Map传参 InsertUserForMap(Map<String, Object> userAttrMap):    #{}中的参数要和map的key一致，  -->
     <insert id="InsertUserForMap">
         insert into user(id, full_name, age, email, password) values(#{id}, #{fullName}, #{age}, #{email}, #{password})
-
     </insert>
 
-    <!-- #{}中的参数要和实体类中对应参数getter方法去掉get后首字母小写一致，  -->
+
+
+    <!--单个参数传递：通过实体类对象传参 InsertUserForObject(User user):   #{}中的参数要和实体类中对应参数getter方法去掉get后首字母小写一致，  -->
     <insert id="InsertUserForObject">
         insert into user(id, full_name, age, email, password) values(#{id}, #{fullName}, #{age}, #{email}, #{password})
     </insert>
 
 
-    <select id="queryById" resultType="entity.User">
-        select id, full_name as fullName, age, email, password from user where id = #{id}
-    </select>
 
+    <!-- 多参数传参方式一： 接口中updateUser(String email, Integer id)参数名称任意 ，在xxx.Mapper.xml使用#{arg0}, #{arg1}, #{arg2}....接收参数-->
+    <!-- 多参数传参方式二： 接口中updateUser(String email, Integer id)参数名称任意 ，在xxx.Mapper.xml使用#{param1}, #{param2}, #{param3}....接收参数-->
+    <!-- 多参数传参方式三： 接口中updateUser(@Param("email") String email, @Param("userId") Integer id)参数名称任意 ，在xxx.Mapper.xml的#{}中的名称和接口中@Param名称一致-->
+    <update id="updateUser">
+        <!--方式一: update user set email = #{arg0} where id = #{arg1} -->
+        <!--方式二: update user set email = #{param1} where id = #{param2} -->
+        update user set email = #{email} where id = #{userId}
+    </update>
+
+
+
+    <!-- 单个参数传递：基本类型传参  selectUserById(Integer userId):  #{}中名称不一定和接口参数名称一致，当然建议最好保持一致，以便于维护 -->
     <!-- User类中属性为fullName， 而数据库中对应字段为full_name,如果查询的时候不给full_name字段取别名fullName，这个属性就不能成功赋给User中的fullName -->
     <select id="selectUserById" resultType="entity.User">
         select  id, full_name  as fullName, age, email, password from user where id = #{id}
     </select>
+
+
+
+    <!--Map接收单条数据返回： Map<String, Object>  selectUserReceiveByMap(Integer userId)  -->
+    <!-- 采用Map集合接收，mybatis会将数据库字段名做为map中key，字段值做value，如果SQL语句中使用了别名，则使用指定的别名做key -->
+    <select id="selectUserReceiveByMap" resultType="java.util.Map">
+        select  id, full_name  as fullName, age, email, password from user where id = #{id}
+    </select>
+
+
+    <!--Map接收返回的多条数据: List<Map<String, Object>> selectAllUserReceiveByListMap() -->
+    <!-- 返回的数据存在多条，需要使用Map集合接收，否则报错 -->
+    <select id="selectAllUserReceiveByListMap" resultType="java.util.Map">
+        select  id, full_name  as fullName, age, email, password from user
+    </select>
+
+
+    <!-- Map<String, Map<String, Object>> 接收多条数据: Map<String, Map<String, Object>> selectAllUserReceiveByMapMap() -->
+    <select id="selectAllUserReceiveByMapMap" resultType="java.util.Map">
+        select  id, full_name  as fullName, age, email, password from user
+    </select>
+
+
+    <!-- resultMap 进行结果映射  -->
+    <select id="selectUserByAge" resultMap="userResultMap">
+        select  * from user where age = #{age}
+    </select>
+
+    <resultMap id="userResultMap" type="entity.User">
+        <result property="fullName" column="full_name" javaType="String" jdbcType="VARCHAR"></result>
+    </resultMap>
 </mapper>
